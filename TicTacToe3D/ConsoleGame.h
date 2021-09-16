@@ -1,13 +1,7 @@
 #pragma once
 #include <string>
 #include "Game.h"
-
-struct Vec3
-{
-	int x;
-	int y;
-	int z;
-};
+#include "Vec3.h"
 
 class ConsoleGame
 {
@@ -19,6 +13,7 @@ private:
 	Game game_;
 	void MainLoop();
 	void DrawBoard();
+	void DrawScore();
 	std::string GetRowAsString(int z, int row);
 	char GetCellCharAt(int x, int y, int z);
 	Vec3 GetPosVec(char column, int row);

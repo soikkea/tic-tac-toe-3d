@@ -14,7 +14,10 @@ void ConsoleGame::MainLoop()
 {
 	auto turn_over = false;
 	while (!game_ended_) {
+		DrawScore();
 		DrawBoard();
+		auto current_player = game_.GetCurrentPlayer().GetSymbol();
+		std::cout << "Turn of " << current_player << "\n";
 		std::cout << "Type \"Quit\" to quit: ";
 		std::string command;
 		std::cin >> command;
@@ -27,7 +30,7 @@ void ConsoleGame::MainLoop()
 			char column = command[0];
 			int row = stoi(command.substr(1));
 			Vec3 vec = GetPosVec(column, row);
-			if (!game_.SetCell(vec.x, vec.y, vec.z, game_.GetCurrentPlayer().GetSymbol())) {
+			if (!game_.SetCell(vec.x, vec.y, vec.z, current_player)) {
 				std::cout << "Invalid move!\n";
 			}
 			else {
@@ -52,6 +55,23 @@ void ConsoleGame::DrawBoard()
 	{
 		std::cout << " " << i + 1 << GetRowAsString(0, i) << " " << GetRowAsString(1, i) << " " << GetRowAsString(2, i) << "\n";
 	}
+}
+
+void ConsoleGame::DrawScore()
+{
+	std::cout << "SCORE: ";
+
+	bool comma = false;
+
+	for (auto& player : game_.GetPlayers()) {
+		if (comma) {
+			std::cout << ", ";
+		}
+		comma = true;
+		std::cout << player.GetSymbol() << ": " << player.GetPoints();
+	}
+
+	std::cout << "\n";
 }
 
 std::string ConsoleGame::GetRowAsString(int z, int row)
