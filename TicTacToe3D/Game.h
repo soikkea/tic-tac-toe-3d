@@ -18,5 +18,6 @@ public:
 	const Player& GetCurrentPlayer() const;
 	const std::vector<Player> GetPlayers() const;
 	void CountPoints();
+	bool PossibleMovesLeft() const;
 };
 

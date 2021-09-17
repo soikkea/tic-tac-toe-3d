@@ -43,3 +43,8 @@ void Game::CountPoints()
         }
     }
 }
+
+bool Game::PossibleMovesLeft() const
+{
+    return board_.GetNumberOfPossibleMatches() > 0;
+}
