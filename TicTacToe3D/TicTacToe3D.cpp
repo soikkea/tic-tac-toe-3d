@@ -7,7 +7,7 @@
 
 int main()
 {
-	std::cout << "Hello World!\n";
+	std::cout << "3D Tic-Tac-Toe!\n";
 
-	ConsoleGame();
+	auto game = ConsoleGame();
 }

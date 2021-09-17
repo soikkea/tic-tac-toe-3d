@@ -17,7 +17,12 @@ void ConsoleGame::MainLoop()
 		DrawScore();
 		DrawBoard();
 		auto current_player = game_.GetCurrentPlayer().GetSymbol();
-		std::cout << "Turn of " << current_player << "\n";
+		if (game_.PossibleMovesLeft()) {
+			std::cout << "Turn of " << current_player << "\n";
+		}
+		else {
+			std::cout << "GAME OVER\n";
+		}
 		std::cout << "Type \"Quit\" to quit: ";
 		std::string command;
 		std::cin >> command;
@@ -26,7 +31,11 @@ void ConsoleGame::MainLoop()
 		if (command == "quit" || command == "q") {
 			game_ended_ = true;
 		}
-		else if (command.length() == 2) {
+		else if (command == "restart") {
+			game_ = Game();
+			turn_over = false;
+		}
+		else if (game_.PossibleMovesLeft() && command.length() == 2) {
 			char column = command[0];
 			int row = stoi(command.substr(1));
 			Vec3 vec = GetPosVec(column, row);
