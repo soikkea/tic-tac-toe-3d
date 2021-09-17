@@ -8,6 +8,6 @@ public:
 	Cell();
 	char GetContent() const;
 	void SetContent(char c);
-	bool IsEmpty();
+	bool IsEmpty() const;
 };
 

@@ -14,7 +14,7 @@ void Cell::SetContent(char c)
 	content_ = c;
 }
 
-bool Cell::IsEmpty()
+bool Cell::IsEmpty() const
 {
 	return content_ == EMPTY;
 }
