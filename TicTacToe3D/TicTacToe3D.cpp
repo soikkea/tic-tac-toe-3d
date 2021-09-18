@@ -4,10 +4,11 @@
 #include <iostream>
 
 #include "ConsoleGame.h"
+#include "Window.h"
 
 int main()
 {
-	std::cout << "3D Tic-Tac-Toe!\n";
-
-	auto game = ConsoleGame();
+	// auto game = ConsoleGame();
+	auto window = Window();
+	window.Open();
 }
