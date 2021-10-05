@@ -24,10 +24,14 @@ camera_{0.0f, 0.0f, 0.0f}, cameraYaw_(0), cameraPitch_(0), models_()
 				std::ostringstream ss;
 				ss << "cube_" << x << y << z;
 				std::string name = ss.str();
-				models_[name] = util::Model{ util::MakeUnitCube(), MatrixTranslate(-1.5f + x, -1.5f + y, -1.5 + z) };
+				auto cube = util::MakeUnitCube();
+				cube.setColor(BLANK);
+				models_[name] = util::Model{ cube, MatrixTranslate(-1.5f + x, -1.5f + y, -1.5 + z) };
 			}
 		}
 	}
+
+	models_["cube_111"].mesh.setColor(BLACK);
 }
 
 void Window::Open()
@@ -101,6 +105,7 @@ void Window::Open()
 				triTransformed.p[0] = util::MultiplyMatrixVector3(tri.p[0], worldMatrix);
 				triTransformed.p[1] = util::MultiplyMatrixVector3(tri.p[1], worldMatrix);
 				triTransformed.p[2] = util::MultiplyMatrixVector3(tri.p[2], worldMatrix);
+				triTransformed.color = tri.color;
 
 				Vector3 normal, line1{}, line2{};
 				line1 = Vector3Subtract(triTransformed.p[1], triTransformed.p[0]);
@@ -114,6 +119,7 @@ void Window::Open()
 					triViewed.p[0] = util::MultiplyMatrixVector3(triTransformed.p[0], viewMatrix);
 					triViewed.p[1] = util::MultiplyMatrixVector3(triTransformed.p[1], viewMatrix);
 					triViewed.p[2] = util::MultiplyMatrixVector3(triTransformed.p[2], viewMatrix);
+					triViewed.color = triTransformed.color;
 
 					auto edge_1 = Vector3Normalize(Vector3Subtract(tri.p[1], tri.p[0]));
 					auto edge_2 = Vector3Normalize(Vector3Subtract(tri.p[2], tri.p[1]));
@@ -137,6 +143,7 @@ void Window::Open()
 						tri_projected.hide_edge_1 = clipped[n].hide_edge_1;
 						tri_projected.hide_edge_2 = clipped[n].hide_edge_2;
 						tri_projected.hide_edge_3 = clipped[n].hide_edge_3;
+						tri_projected.color = clipped[n].color;
 
 						// Scale into view
 						Vector3 offsetView = { 1,1,0 };
@@ -169,10 +176,10 @@ void Window::Open()
 		DrawText(FormatText("Camera pos: %2.02f, %2.02f, %2.02f,", camera_.x, camera_.y, camera_.z), 5, 25, 20, BLACK);
 
 		for (auto& triProjected : triangles_to_raster) {
-			//DrawTriangle(
-			//	{ triProjected.p[0].x, triProjected.p[0].y },
-			//	{ triProjected.p[1].x, triProjected.p[1].y },
-			//	{ triProjected.p[2].x, triProjected.p[2].y }, BLACK);
+			DrawTriangle(
+				{ triProjected.p[0].x, triProjected.p[0].y },
+				{ triProjected.p[1].x, triProjected.p[1].y },
+				{ triProjected.p[2].x, triProjected.p[2].y }, triProjected.color);
 
 			if (!triProjected.hide_edge_1) {
 				DrawLine(triProjected.p[0].x, triProjected.p[0].y,

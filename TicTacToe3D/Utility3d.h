@@ -11,11 +11,15 @@ namespace util {
 		bool hide_edge_1 = false;
 		bool hide_edge_2 = false;
 		bool hide_edge_3 = false;
+
+		Color color;
 	};
 
 	struct Mesh
 	{
 		std::vector<Triangle> tris;
+
+		void setColor(Color color);
 	};
 
 	struct Model

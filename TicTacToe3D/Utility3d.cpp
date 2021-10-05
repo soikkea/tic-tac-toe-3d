@@ -78,6 +78,7 @@ int util::TriangleClipAgainstPlane(Vector3 planePoint, Vector3 planeNormal, Tria
 		triOut1.hide_edge_1 = triIn.hide_edge_1;
 		triOut1.hide_edge_2 = triIn.hide_edge_2;
 		triOut1.hide_edge_3 = triIn.hide_edge_3;
+		triOut1.color = triIn.color;
 
 		auto pointInside = pointsInside[0];
 		switch (pointInside)
@@ -101,7 +102,6 @@ int util::TriangleClipAgainstPlane(Vector3 planePoint, Vector3 planeNormal, Tria
 		return 1;
 	}
 	if (insidePointCount == 2 && outsidePointCount == 1) {
-		// TODO???
 		triOut1.hide_edge_1 = triIn.hide_edge_1;
 		triOut1.hide_edge_2 = triIn.hide_edge_2;
 		triOut1.hide_edge_3 = triIn.hide_edge_3;
@@ -128,10 +128,12 @@ int util::TriangleClipAgainstPlane(Vector3 planePoint, Vector3 planeNormal, Tria
 		triOut1.p[0] = *insidePoints[0];
 		triOut1.p[1] = *insidePoints[1];
 		triOut1.p[2] = Vector3IntersectPlane(planePoint, planeNormal, *insidePoints[0], *outsidePoints[0]);
+		triOut1.color = triIn.color;
 
 		triOut2.p[0] = *insidePoints[1];
 		triOut2.p[1] = triOut1.p[2];
 		triOut2.p[2] = Vector3IntersectPlane(planePoint, planeNormal, *insidePoints[1], *outsidePoints[0]);
+		triOut2.color = triIn.color;
 
 		return 2;
 	}
@@ -171,4 +173,11 @@ util::Mesh util::MakeUnitCube()
 	};
 
 	return cube;
+}
+
+void util::Mesh::setColor(Color color)
+{
+	for (auto& tri : tris) {
+		tri.color = color;
+	}
 }
