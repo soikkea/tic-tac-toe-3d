@@ -1,10 +1,11 @@
 #pragma once
 #include "Utility3d.h"
+#include <map>
+#include <string>
 
 class Window
 {
 private:
-	util::Mesh cube_;
 	Matrix projection_matrix_;
 	Vector3 camera_;
 	Vector3 lookDir_;
@@ -14,6 +15,8 @@ private:
 	float theta_;
 	float cameraYaw_;
 	float cameraPitch_;
+
+	std::map<std::string, util::Model> models_;
 public:
 	Window();
 	void Open();

@@ -18,6 +18,12 @@ namespace util {
 		std::vector<Triangle> tris;
 	};
 
+	struct Model
+	{
+		util::Mesh mesh;
+		Matrix transformation;
+	};
+
 	Vector3 MultiplyMatrixVector3(Vector3& const vec, Matrix& const mat);
 
 	Matrix MakeProjectionMatrix(float fov, float aspectRatio, float fNear, float fFar);
@@ -25,4 +31,6 @@ namespace util {
 	int TriangleClipAgainstPlane(Vector3 planePoint, Vector3 planeNormal, Triangle& triIn, Triangle& triOut1, Triangle& triOut2);
 
 	Vector3 Vector3IntersectPlane(Vector3& planePoint, Vector3& planeNormal, Vector3& lineStart, Vector3 lineEnd);
+
+	util::Mesh MakeUnitCube();
 }
