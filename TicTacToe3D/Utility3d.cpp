@@ -175,6 +175,30 @@ util::Mesh util::MakeUnitCube()
 	return cube;
 }
 
+Matrix util::BillboardMatrix(const Matrix& viewMatrix, const Vector3& position)
+{
+	auto mat = Matrix();
+
+	mat.m0 = viewMatrix.m0;
+	mat.m1 = viewMatrix.m4;
+	mat.m2 = viewMatrix.m8;
+	mat.m3 = 0;
+	mat.m4 = viewMatrix.m1;
+	mat.m5 = viewMatrix.m5;
+	mat.m6 = viewMatrix.m9;
+	mat.m7 = 0;
+	mat.m8 = viewMatrix.m2;
+	mat.m9 = viewMatrix.m6;
+	mat.m10 = viewMatrix.m10;
+	mat.m11 = 0;
+	mat.m12 = position.x;
+	mat.m13 = position.y;
+	mat.m14 = position.z;
+	mat.m15 = 1;
+
+	return mat;
+}
+
 void util::Mesh::setColor(Color color)
 {
 	for (auto& tri : tris) {

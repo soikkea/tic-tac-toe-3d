@@ -37,4 +37,6 @@ namespace util {
 	Vector3 Vector3IntersectPlane(Vector3& planePoint, Vector3& planeNormal, Vector3& lineStart, Vector3 lineEnd);
 
 	util::Mesh MakeUnitCube();
+
+	Matrix BillboardMatrix(const Matrix& viewMatrix, const Vector3& position);
 }
