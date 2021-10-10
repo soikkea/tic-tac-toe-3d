@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <raylib.h>
+#include <string>
 
 namespace util {
 	struct Triangle
@@ -27,6 +28,8 @@ namespace util {
 		util::Mesh mesh;
 		Vector3 position;
 	};
+
+	util::Mesh LoadMeshFromObj(std::string fileName);
 
 	Vector3 MultiplyMatrixVector3(Vector3& const vec, Matrix& const mat);
 

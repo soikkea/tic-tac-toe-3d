@@ -1,5 +1,47 @@
 #include "Utility3d.h"
 #include <raymath.h>
+#include <strstream>
+#include <fstream>
+#include <stdexcept>
+
+util::Mesh util::LoadMeshFromObj(std::string fileName)
+{
+	auto mesh = util::Mesh();
+
+	std::ifstream f(fileName);
+	if (!f.is_open()) {
+		throw std::runtime_error(fileName + " not found");
+	}
+
+	std::vector<Vector3> verts;
+
+	while (!f.eof())
+	{
+		char line[128];
+		f.getline(line, 128);
+
+		std::strstream s;
+		s << line;
+
+		char ignore;
+
+		if (line[0] == 'v') {
+			Vector3 v{};
+			s >> ignore >> v.x >> v.y >> v.z;
+			verts.push_back(v);
+		}
+
+		if (line[0] == 'f') {
+			int face[3]{};
+			s >> ignore >> face[0] >> face[1] >> face[2];
+			mesh.tris.push_back({ verts[face[0] - 1], verts[face[1] - 1], verts[face[2] - 1] });
+		}
+	}
+
+	f.close();
+
+	return mesh;
+}
 
 Vector3 util::MultiplyMatrixVector3(Vector3& const vec, Matrix& const mat)
 {
