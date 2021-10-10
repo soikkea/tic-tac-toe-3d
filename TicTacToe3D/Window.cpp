@@ -60,7 +60,7 @@ bool Window::useCube(const Vec3& pos)
 Window::Window() : screen_width_(800), screen_height_(800), theta_(0),
 camera_{0.0f, 0.0f, 0.0f}, cameraYaw_(0), cameraPitch_(0), models_(),
 selectedCube_{1, 1, 1}, selectedCubes_(), lookDir_{0, 0, 0},
-cameraDistance_(30)
+cameraDistance_(30), meshes_()
 {
 	// Projection Matrix
 	float near = 0.1f;
@@ -87,6 +87,13 @@ cameraDistance_(30)
 	}
 
 	SelectCube({ 1, 1, 1 });
+
+	auto xMesh = util::LoadMeshFromObj("x.obj");
+	auto oMesh = util::LoadMeshFromObj("o.obj");
+	xMesh.setColor(RED);
+	oMesh.setColor(BLUE);
+	meshes_["x"] = xMesh;
+	meshes_["o"] = oMesh;
 }
 
 void Window::Open()

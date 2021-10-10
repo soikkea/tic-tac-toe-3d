@@ -22,6 +22,7 @@ private:
 	Vec3 selectedCube_;
 
 	std::map<std::string, util::Model> models_;
+	std::map<std::string, util::Mesh> meshes_;
 
 	std::set<std::string> selectedCubes_;
 
