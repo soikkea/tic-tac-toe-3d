@@ -4,8 +4,63 @@
 #include <algorithm>
 #include <sstream>
 
+void Window::SelectCube(const Vec3& pos)
+{
+	if (!(
+		pos.x >= 0 && pos.x <= 2 &&
+		pos.y >= 0 && pos.y <= 2 &&
+		pos.z >= 0 && pos.z <= 2))
+	{
+		return;
+	}
+
+	auto selectedCubeName = "cube_" + getCubeIdString(selectedCube_);
+	models_[selectedCubeName].mesh.setColor(BLANK);
+
+	selectedCube_ = pos;
+
+	selectedCubeName = "cube_" + getCubeIdString(selectedCube_);
+	models_[selectedCubeName].mesh.setColor({ 135,60,190, 100 });
+}
+
+std::string Window::getCubeIdString(const Vec3& pos)
+{
+	std::ostringstream ss;
+	ss << pos.x << pos.y << pos.z;
+	return ss.str();
+}
+
+bool Window::useCube(const Vec3& pos)
+{
+	if (!(
+		pos.x >= 0 && pos.x <= 2 &&
+		pos.y >= 0 && pos.y <= 2 &&
+		pos.z >= 0 && pos.z <= 2))
+	{
+		return false;
+	}
+	std::string modelName = "flat_" + getCubeIdString(pos);
+	if (selectedCubes_.count(modelName) > 0)
+	{
+		return false;
+	}
+	selectedCubes_.insert(modelName);
+	auto flat = util::Mesh();
+	flat.tris = {
+		{-0.5f, -0.5f, 0.0f, -0.5f, 0.5f, 0.0f, 0.5f, 0.5f, 0.0f},
+		{-0.5f, -0.5f, 0.0f, 0.5f, 0.5f, 0.0f, 0.5f, -0.5f, 0.0f}
+	};
+	flat.setColor(BLACK);
+
+	models_[modelName] = util::Model{ flat, Vector3Add({-1, -1, -1}, {(float)pos.x, (float)pos.y, (float)pos.z}) };
+
+	return true;
+}
+
 Window::Window() : screen_width_(800), screen_height_(800), theta_(0),
-camera_{0.0f, 0.0f, 0.0f}, cameraYaw_(0), cameraPitch_(0), models_()
+camera_{0.0f, 0.0f, 0.0f}, cameraYaw_(0), cameraPitch_(0), models_(),
+selectedCube_{1, 1, 1}, selectedCubes_(), lookDir_{0, 0, 0},
+cameraDistance_(30)
 {
 	// Projection Matrix
 	float near = 0.1f;
@@ -31,6 +86,7 @@ camera_{0.0f, 0.0f, 0.0f}, cameraYaw_(0), cameraPitch_(0), models_()
 		}
 	}
 
+	SelectCube({ 1, 1, 1 });
 }
 
 void Window::Open()
@@ -54,13 +110,24 @@ void Window::Open()
 		elapsed_time = (float)(total_time - lastUpdateTime);
 		lastUpdateTime = total_time;
 
-		if (IsKeyDown(KEY_RIGHT)) cameraYaw_ += 0.5f * elapsed_time;
-		if (IsKeyDown(KEY_LEFT)) cameraYaw_ -= 0.5f * elapsed_time;
-		Vector3 forward = Vector3Scale(lookDir_, 8.0f * elapsed_time);
-		if (IsKeyDown(KEY_UP)) camera_ = Vector3Add(camera_, forward);
-		if (IsKeyDown(KEY_DOWN)) camera_ = Vector3Subtract(camera_, forward);
-		if (IsKeyDown(KEY_Q)) cameraPitch_ += 0.5f * elapsed_time;
-		if (IsKeyDown(KEY_E)) cameraPitch_ -= 0.5f * elapsed_time;
+		//if (IsKeyDown(KEY_RIGHT)) cameraYaw_ += 0.5f * elapsed_time;
+		//if (IsKeyDown(KEY_LEFT)) cameraYaw_ -= 0.5f * elapsed_time;
+		//Vector3 forward = Vector3Scale(lookDir_, 8.0f * elapsed_time);
+		//if (IsKeyDown(KEY_UP)) camera_ = Vector3Add(camera_, forward);
+		//if (IsKeyDown(KEY_DOWN)) camera_ = Vector3Subtract(camera_, forward);
+		//if (IsKeyDown(KEY_Q)) cameraPitch_ += 0.5f * elapsed_time;
+		//if (IsKeyDown(KEY_E)) cameraPitch_ -= 0.5f * elapsed_time;
+
+		if (IsKeyDown(KEY_UP)) cameraDistance_ -= 5.f * elapsed_time;
+		if (IsKeyDown(KEY_DOWN)) cameraDistance_ += 5.f * elapsed_time;
+		
+		if (IsKeyPressed(KEY_D)) SelectCube(selectedCube_ + Vec3{ 1, 0, 0 });
+		if (IsKeyPressed(KEY_A)) SelectCube(selectedCube_ + Vec3{ -1, 0, 0 });
+		if (IsKeyPressed(KEY_W)) SelectCube(selectedCube_ + Vec3{ 0, 0, -1 });
+		if (IsKeyPressed(KEY_S)) SelectCube(selectedCube_ + Vec3{ 0, 0, 1 });
+		if (IsKeyPressed(KEY_Q)) SelectCube(selectedCube_ + Vec3{ 0, 1, 0 });
+		if (IsKeyPressed(KEY_E)) SelectCube(selectedCube_ + Vec3{ 0, -1, 0 });
+		if (IsKeyPressed(KEY_SPACE)) useCube(selectedCube_);
 
 		if (IsMouseButtonDown(MOUSE_LEFT_BUTTON) || IsMouseButtonDown(MOUSE_RIGHT_BUTTON)) {
 			isDragging = true;
@@ -78,13 +145,12 @@ void Window::Open()
 		lastMousePos = currentMousePos;
 
 		Vector3 up = { 0, 1, 0 };
-		Vector3 target = { 0, 0, 1 };
+		Vector3 target = { 0, 0, -1 };
 		cameraPitch_ = Clamp(cameraPitch_, (-PI / 2) * 0.99f, (PI / 2) * 0.99f);
 		Matrix cameraRot = MatrixRotateXYZ({cameraPitch_, cameraYaw_, 0});
 		lookDir_ = util::MultiplyMatrixVector3(target, cameraRot);
 
-		// TODO: add parameter for camera distance
-		camera_ = Vector3Subtract({ 0,0,0 }, Vector3Scale(lookDir_, 30));
+		camera_ = Vector3Subtract({ 0,0,0 }, Vector3Scale(lookDir_, cameraDistance_));
 		target = Vector3Subtract(camera_, lookDir_);
 		Matrix cameraMatrix = MatrixLookAt(camera_, target, up);
 		Matrix viewMatrix = cameraMatrix;
