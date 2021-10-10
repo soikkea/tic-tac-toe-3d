@@ -25,7 +25,7 @@ namespace util {
 	struct Model
 	{
 		util::Mesh mesh;
-		Matrix transformation;
+		Vector3 position;
 	};
 
 	Vector3 MultiplyMatrixVector3(Vector3& const vec, Matrix& const mat);

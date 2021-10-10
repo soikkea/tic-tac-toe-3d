@@ -26,12 +26,11 @@ camera_{0.0f, 0.0f, 0.0f}, cameraYaw_(0), cameraPitch_(0), models_()
 				std::string name = ss.str();
 				auto cube = util::MakeUnitCube();
 				cube.setColor(BLANK);
-				models_[name] = util::Model{ cube, MatrixTranslate(-1.5f + x, -1.5f + y, -1.5 + z) };
+				models_[name] = util::Model{ cube, {-1.5f + x, -1.5f + y, -1.5f + z} };
 			}
 		}
 	}
 
-	models_["cube_111"].mesh.setColor(BLACK);
 }
 
 void Window::Open()
@@ -95,7 +94,14 @@ void Window::Open()
 		for (auto& entry : models_) {
 
 			Matrix worldMatrix = MatrixIdentity();
-			worldMatrix = MatrixMultiply(worldMatrix, entry.second.transformation);
+			Matrix transformMatrix;
+			if (entry.first.find("flat_") == 0) {
+				transformMatrix = util::BillboardMatrix(viewMatrix, entry.second.position);
+			}
+			else {
+				transformMatrix = MatrixTranslate(entry.second.position.x, entry.second.position.y, entry.second.position.z);
+			}
+			worldMatrix = MatrixMultiply(worldMatrix, transformMatrix);
 
 			// Transform triangles
 			for (auto& tri : entry.second.mesh.tris) {
