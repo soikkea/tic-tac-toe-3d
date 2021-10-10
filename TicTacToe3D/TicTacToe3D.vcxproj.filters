@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Models">
+      <UniqueIdentifier>{284503ff-2f79-48a5-825b-5f0f5bd9d5a3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TicTacToe3D.cpp">
@@ -68,5 +71,13 @@
     <ClInclude Include="Utility3d.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="o.obj">
+      <Filter>Models</Filter>
+    </Text>
+    <Text Include="x.obj">
+      <Filter>Models</Filter>
+    </Text>
   </ItemGroup>
 </Project>
