@@ -235,7 +235,14 @@ void Window::Open()
 		ClearBackground(RAYWHITE);
 		DrawText("TicTacToe 3D!", 190, 200, 20, LIGHTGRAY);
 		DrawFPS(5, 5);
-		DrawText(FormatText("Camera pos: %2.02f, %2.02f, %2.02f,", camera_.x, camera_.y, camera_.z), 5, 25, 20, BLACK);
+		DrawText(FormatText("Camera pos: %2.02f, %2.02f, %2.02f", camera_.x, camera_.y, camera_.z), 5, 25, 20, BLACK);
+
+		auto xPlayerScore = game_.GetPlayer('X').GetPoints();
+		auto oPlayerScore = game_.GetPlayer('O').GetPoints();
+		auto scoreText = FormatText("%d :X | O: %d", xPlayerScore, oPlayerScore);
+		auto scoreTextSize = 40;
+		auto scoreXPos = screen_width_ / 2.0f - MeasureText(scoreText, scoreTextSize)/2.0f;
+		DrawText(scoreText, scoreXPos, 30, scoreTextSize, BLACK);
 
 		for (auto& triProjected : triangles_to_raster) {
 			DrawTriangle(
