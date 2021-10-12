@@ -81,6 +81,7 @@ cameraDistance_(30), meshes_()
 				std::string name = ss.str();
 				auto cube = util::MakeUnitCube();
 				cube.setColor(BLANK);
+				cube.showWireframe(true);
 				models_[name] = util::Model{ cube, {-1.5f + x, -1.5f + y, -1.5f + z} };
 			}
 		}
@@ -184,58 +185,42 @@ void Window::Open()
 				triTransformed.p[0] = util::MultiplyMatrixVector3(tri.p[0], worldMatrix);
 				triTransformed.p[1] = util::MultiplyMatrixVector3(tri.p[1], worldMatrix);
 				triTransformed.p[2] = util::MultiplyMatrixVector3(tri.p[2], worldMatrix);
-				triTransformed.color = tri.color;
 
-				Vector3 normal, line1{}, line2{};
-				line1 = Vector3Subtract(triTransformed.p[1], triTransformed.p[0]);
-				line2 = Vector3Subtract(triTransformed.p[2], triTransformed.p[0]);
+				// This is where you would check if the triangle needs to be drawn using its normal, but we can just draw everything
 
-				normal = Vector3Normalize(Vector3CrossProduct(line1, line2));
+				triViewed.p[0] = util::MultiplyMatrixVector3(triTransformed.p[0], viewMatrix);
+				triViewed.p[1] = util::MultiplyMatrixVector3(triTransformed.p[1], viewMatrix);
+				triViewed.p[2] = util::MultiplyMatrixVector3(triTransformed.p[2], viewMatrix);
+				triViewed.color = tri.color;
+				triViewed.hide_edge_1 = tri.hide_edge_1;
+				triViewed.hide_edge_2 = tri.hide_edge_2;
+				triViewed.hide_edge_3 = tri.hide_edge_3;
 
-				auto from_camera = Vector3Subtract(triTransformed.p[0], camera_);
-				if (true || Vector3DotProduct(normal, from_camera) < 0.0f && Vector3DotProduct(lookDir_, from_camera) > 0.0f)
-				{
-					triViewed.p[0] = util::MultiplyMatrixVector3(triTransformed.p[0], viewMatrix);
-					triViewed.p[1] = util::MultiplyMatrixVector3(triTransformed.p[1], viewMatrix);
-					triViewed.p[2] = util::MultiplyMatrixVector3(triTransformed.p[2], viewMatrix);
-					triViewed.color = triTransformed.color;
+				// Clip triangles
+				int clippedTriangles = 0;
+				util::Triangle clipped[2];
+				clippedTriangles = util::TriangleClipAgainstPlane({ 0.0f, 0.0f, 0.1f }, { 0.0f, 0.0f, 1.0f }, triViewed, clipped[0], clipped[1]);
 
-					auto edge_1 = Vector3Normalize(Vector3Subtract(tri.p[1], tri.p[0]));
-					auto edge_2 = Vector3Normalize(Vector3Subtract(tri.p[2], tri.p[1]));
-					auto edge_3 = Vector3Normalize(Vector3Subtract(tri.p[0], tri.p[2]));
-					auto dot_1 = fabs(Vector3DotProduct(edge_2, edge_3));
-					auto dot_2 = fabs(Vector3DotProduct(edge_1, edge_3));
-					auto dot_3 = fabs(Vector3DotProduct(edge_1, edge_2));
-					triViewed.hide_edge_1 = (dot_1 <= dot_2) && (dot_1 <= dot_3);
-					triViewed.hide_edge_2 = (dot_2 <= dot_1) && (dot_2 <= dot_3);
-					triViewed.hide_edge_3 = (dot_3 <= dot_1) && (dot_3 <= dot_2);
+				for (int n = 0; n < clippedTriangles; n++) {
+					tri_projected.p[0] = util::MultiplyMatrixVector3(clipped[n].p[0], projection_matrix_);
+					tri_projected.p[1] = util::MultiplyMatrixVector3(clipped[n].p[1], projection_matrix_);
+					tri_projected.p[2] = util::MultiplyMatrixVector3(clipped[n].p[2], projection_matrix_);
+					tri_projected.hide_edge_1 = clipped[n].hide_edge_1;
+					tri_projected.hide_edge_2 = clipped[n].hide_edge_2;
+					tri_projected.hide_edge_3 = clipped[n].hide_edge_3;
+					tri_projected.color = clipped[n].color;
 
-					// Clip triangles
-					int clippedTriangles = 0;
-					util::Triangle clipped[2];
-					clippedTriangles = util::TriangleClipAgainstPlane({ 0.0f, 0.0f, 0.1f }, { 0.0f, 0.0f, 1.0f }, triViewed, clipped[0], clipped[1]);
+					// Scale into view
+					Vector3 offsetView = { 1,1,0 };
+					tri_projected.p[0] = Vector3Add(tri_projected.p[0], offsetView);
+					tri_projected.p[1] = Vector3Add(tri_projected.p[1], offsetView);
+					tri_projected.p[2] = Vector3Add(tri_projected.p[2], offsetView);
 
-					for (int n = 0; n < clippedTriangles; n++) {
-						tri_projected.p[0] = util::MultiplyMatrixVector3(clipped[n].p[0], projection_matrix_);
-						tri_projected.p[1] = util::MultiplyMatrixVector3(clipped[n].p[1], projection_matrix_);
-						tri_projected.p[2] = util::MultiplyMatrixVector3(clipped[n].p[2], projection_matrix_);
-						tri_projected.hide_edge_1 = clipped[n].hide_edge_1;
-						tri_projected.hide_edge_2 = clipped[n].hide_edge_2;
-						tri_projected.hide_edge_3 = clipped[n].hide_edge_3;
-						tri_projected.color = clipped[n].color;
+					tri_projected.p[0].x *= 0.5f * (float)screen_width_; tri_projected.p[0].y *= 0.5f * (float)screen_height_;
+					tri_projected.p[1].x *= 0.5f * (float)screen_width_; tri_projected.p[1].y *= 0.5f * (float)screen_height_;
+					tri_projected.p[2].x *= 0.5f * (float)screen_width_; tri_projected.p[2].y *= 0.5f * (float)screen_height_;
 
-						// Scale into view
-						Vector3 offsetView = { 1,1,0 };
-						tri_projected.p[0] = Vector3Add(tri_projected.p[0], offsetView);
-						tri_projected.p[1] = Vector3Add(tri_projected.p[1], offsetView);
-						tri_projected.p[2] = Vector3Add(tri_projected.p[2], offsetView);
-
-						tri_projected.p[0].x *= 0.5f * (float)screen_width_; tri_projected.p[0].y *= 0.5f * (float)screen_height_;
-						tri_projected.p[1].x *= 0.5f * (float)screen_width_; tri_projected.p[1].y *= 0.5f * (float)screen_height_;
-						tri_projected.p[2].x *= 0.5f * (float)screen_width_; tri_projected.p[2].y *= 0.5f * (float)screen_height_;
-
-						triangles_to_raster.push_back(tri_projected);
-					}
+					triangles_to_raster.push_back(tri_projected);
 				}
 			}
 		}

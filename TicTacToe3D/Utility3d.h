@@ -9,9 +9,9 @@ namespace util {
 	{
 		Vector3 p[3];
 
-		bool hide_edge_1 = false;
-		bool hide_edge_2 = false;
-		bool hide_edge_3 = false;
+		bool hide_edge_1 = true;
+		bool hide_edge_2 = true;
+		bool hide_edge_3 = true;
 
 		Color color;
 	};
@@ -21,6 +21,7 @@ namespace util {
 		std::vector<Triangle> tris;
 
 		void setColor(Color color);
+		void showWireframe(bool enable);
 	};
 
 	struct Model

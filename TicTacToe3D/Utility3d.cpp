@@ -247,3 +247,28 @@ void util::Mesh::setColor(Color color)
 		tri.color = color;
 	}
 }
+
+void util::Mesh::showWireframe(bool enable)
+{
+	if (!enable) {
+		for (auto& tri : tris)
+		{
+			tri.hide_edge_1 = true;
+			tri.hide_edge_2 = true;
+			tri.hide_edge_3 = true;
+		}
+		return;
+	}
+	for (auto& tri : tris)
+	{
+		auto edge_1 = Vector3Normalize(Vector3Subtract(tri.p[1], tri.p[0]));
+		auto edge_2 = Vector3Normalize(Vector3Subtract(tri.p[2], tri.p[1]));
+		auto edge_3 = Vector3Normalize(Vector3Subtract(tri.p[0], tri.p[2]));
+		auto dot_1 = fabs(Vector3DotProduct(edge_2, edge_3));
+		auto dot_2 = fabs(Vector3DotProduct(edge_1, edge_3));
+		auto dot_3 = fabs(Vector3DotProduct(edge_1, edge_2));
+		tri.hide_edge_1 = (dot_1 <= dot_2) && (dot_1 <= dot_3);
+		tri.hide_edge_2 = (dot_2 <= dot_1) && (dot_2 <= dot_3);
+		tri.hide_edge_3 = (dot_3 <= dot_1) && (dot_3 <= dot_2);
+	}
+}
