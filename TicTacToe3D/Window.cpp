@@ -45,22 +45,20 @@ bool Window::useCube(const Vec3& pos)
 		return false;
 	}
 	selectedCubes_.insert(modelName);
-	auto flat = util::Mesh();
-	flat.tris = {
-		{-0.5f, -0.5f, 0.0f, -0.5f, 0.5f, 0.0f, 0.5f, 0.5f, 0.0f},
-		{-0.5f, -0.5f, 0.0f, 0.5f, 0.5f, 0.0f, 0.5f, -0.5f, 0.0f}
-	};
-	flat.setColor(BLACK);
 
-	models_[modelName] = util::Model{ flat, Vector3Add({-1, -1, -1}, {(float)pos.x, (float)pos.y, (float)pos.z}) };
+	std::string playerSymbol{ game_.GetCurrentPlayer().GetSymbol() };
+
+	models_[modelName] = util::Model{ meshes_[playerSymbol], Vector3Add({-1, -1, -1}, {(float)pos.x, (float)pos.y, (float)pos.z})};
+
+	game_.EndTurn();
 
 	return true;
 }
 
 Window::Window() : screen_width_(800), screen_height_(800), theta_(0),
-camera_{0.0f, 0.0f, 0.0f}, cameraYaw_(0), cameraPitch_(0), models_(),
-selectedCube_{1, 1, 1}, selectedCubes_(), lookDir_{0, 0, 0},
-cameraDistance_(30), meshes_()
+camera_{ 0.0f, 0.0f, 0.0f }, cameraYaw_(0), cameraPitch_(0), models_(),
+selectedCube_{ 1, 1, 1 }, selectedCubes_(), lookDir_{ 0, 0, 0 },
+cameraDistance_(30), meshes_(), game_()
 {
 	// Projection Matrix
 	float near = 0.1f;
@@ -93,8 +91,8 @@ cameraDistance_(30), meshes_()
 	auto oMesh = util::LoadMeshFromObj("o.obj");
 	xMesh.setColor(RED);
 	oMesh.setColor(BLUE);
-	meshes_["x"] = xMesh;
-	meshes_["o"] = oMesh;
+	meshes_["X"] = xMesh;
+	meshes_["O"] = oMesh;
 }
 
 void Window::Open()

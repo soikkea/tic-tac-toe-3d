@@ -4,6 +4,7 @@
 #include <string>
 #include "Vec3.h"
 #include <set>
+#include "Game.h"
 
 class Window
 {
@@ -25,6 +26,8 @@ private:
 	std::map<std::string, util::Mesh> meshes_;
 
 	std::set<std::string> selectedCubes_;
+
+	Game game_;
 
 	void SelectCube(const Vec3& pos);
 	std::string getCubeIdString(const Vec3& pos);
