@@ -46,9 +46,13 @@ bool Window::useCube(const Vec3& pos)
 	}
 	selectedCubes_.insert(modelName);
 
-	std::string playerSymbol{ game_.GetCurrentPlayer().GetSymbol() };
+	auto playerSymbol = game_.GetCurrentPlayer().GetSymbol();
 
-	models_[modelName] = util::Model{ meshes_[playerSymbol], Vector3Add({-1, -1, -1}, {(float)pos.x, (float)pos.y, (float)pos.z})};
+	std::string playerSymbolStr{ playerSymbol };
+
+	models_[modelName] = util::Model{ meshes_[playerSymbolStr], Vector3Add({-1, -1, -1}, {(float)pos.x, (float)pos.y, (float)pos.z})};
+
+	game_.SetCell(pos.x, pos.y, pos.z, playerSymbol);
 
 	game_.EndTurn();
 
