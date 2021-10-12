@@ -256,15 +256,15 @@ void Window::Open()
 
 			if (!triProjected.hide_edge_1) {
 				DrawLine(triProjected.p[0].x, triProjected.p[0].y,
-					triProjected.p[1].x, triProjected.p[1].y, RED);
+					triProjected.p[1].x, triProjected.p[1].y, BLACK);
 			}
 			if (!triProjected.hide_edge_2) {
 				DrawLine(triProjected.p[1].x, triProjected.p[1].y,
-					triProjected.p[2].x, triProjected.p[2].y, RED);
+					triProjected.p[2].x, triProjected.p[2].y, BLACK);
 			}
 			if (!triProjected.hide_edge_3) {
 				DrawLine(triProjected.p[2].x, triProjected.p[2].y,
-					triProjected.p[0].x, triProjected.p[0].y, RED);
+					triProjected.p[0].x, triProjected.p[0].y, BLACK);
 			}
 		}
 
