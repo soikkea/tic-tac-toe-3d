@@ -1,4 +1,6 @@
 #include "Game.h"
+#include <algorithm>
+#include <stdexcept>
 
 Game::Game() : board_(), players_{Player('X'), Player('O')}, current_player_(0)
 {
@@ -23,6 +25,17 @@ void Game::EndTurn()
 const Player& Game::GetCurrentPlayer() const
 {
     return players_[current_player_];
+}
+
+const Player& Game::GetPlayer(char symbol) const
+{
+    auto it = std::find_if(players_.begin(), players_.end(), [symbol](const Player& player) {
+        return player.GetSymbol() == symbol;
+        });
+    if (it == players_.end()) {
+        throw std::invalid_argument("No such player: " + symbol);
+    }
+    return *it;
 }
 
 const std::vector<Player> Game::GetPlayers() const

@@ -16,6 +16,7 @@ public:
 	bool SetCell(int x, int y, int z, char c);
 	void EndTurn();
 	const Player& GetCurrentPlayer() const;
+	const Player& GetPlayer(char symbol) const;
 	const std::vector<Player> GetPlayers() const;
 	void CountPoints();
 	bool PossibleMovesLeft() const;
