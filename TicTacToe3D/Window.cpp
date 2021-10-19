@@ -189,7 +189,7 @@ void Window::Open()
 			cameraYaw_ -= 2.0f * PI;
 		}
 		Matrix cameraRot = MatrixRotateXYZ({cameraPitch_, cameraYaw_, 0});
-		lookDir_ = util::MultiplyMatrixVector3(target, cameraRot);
+		lookDir_ = util::MultiplyMatrixVector3(cameraRot, target);
 
 		camera_ = Vector3Subtract({ 0,0,0 }, Vector3Scale(lookDir_, cameraDistance_));
 		target = Vector3Subtract(camera_, lookDir_);
@@ -215,15 +215,15 @@ void Window::Open()
 
 				util::Triangle tri_projected, triTransformed, triViewed;
 
-				triTransformed.p[0] = util::MultiplyMatrixVector3(tri.p[0], worldMatrix);
-				triTransformed.p[1] = util::MultiplyMatrixVector3(tri.p[1], worldMatrix);
-				triTransformed.p[2] = util::MultiplyMatrixVector3(tri.p[2], worldMatrix);
+				triTransformed.p[0] = util::MultiplyMatrixVector3(worldMatrix, tri.p[0]);
+				triTransformed.p[1] = util::MultiplyMatrixVector3(worldMatrix, tri.p[1]);
+				triTransformed.p[2] = util::MultiplyMatrixVector3(worldMatrix, tri.p[2]);
 
 				// This is where you would check if the triangle needs to be drawn using its normal, but we can just draw everything
 
-				triViewed.p[0] = util::MultiplyMatrixVector3(triTransformed.p[0], viewMatrix);
-				triViewed.p[1] = util::MultiplyMatrixVector3(triTransformed.p[1], viewMatrix);
-				triViewed.p[2] = util::MultiplyMatrixVector3(triTransformed.p[2], viewMatrix);
+				triViewed.p[0] = util::MultiplyMatrixVector3(viewMatrix, triTransformed.p[0]);
+				triViewed.p[1] = util::MultiplyMatrixVector3(viewMatrix, triTransformed.p[1]);
+				triViewed.p[2] = util::MultiplyMatrixVector3(viewMatrix, triTransformed.p[2]);
 				triViewed.color = tri.color;
 				triViewed.hide_edge_1 = tri.hide_edge_1;
 				triViewed.hide_edge_2 = tri.hide_edge_2;
@@ -235,9 +235,9 @@ void Window::Open()
 				clippedTriangles = util::TriangleClipAgainstPlane({ 0.0f, 0.0f, 0.1f }, { 0.0f, 0.0f, 1.0f }, triViewed, clipped[0], clipped[1]);
 
 				for (int n = 0; n < clippedTriangles; n++) {
-					tri_projected.p[0] = util::MultiplyMatrixVector3(clipped[n].p[0], projection_matrix_);
-					tri_projected.p[1] = util::MultiplyMatrixVector3(clipped[n].p[1], projection_matrix_);
-					tri_projected.p[2] = util::MultiplyMatrixVector3(clipped[n].p[2], projection_matrix_);
+					tri_projected.p[0] = util::MultiplyMatrixVector3(projection_matrix_, clipped[n].p[0]);
+					tri_projected.p[1] = util::MultiplyMatrixVector3(projection_matrix_, clipped[n].p[1]);
+					tri_projected.p[2] = util::MultiplyMatrixVector3(projection_matrix_, clipped[n].p[2]);
 					tri_projected.hide_edge_1 = clipped[n].hide_edge_1;
 					tri_projected.hide_edge_2 = clipped[n].hide_edge_2;
 					tri_projected.hide_edge_3 = clipped[n].hide_edge_3;

@@ -32,7 +32,7 @@ namespace util {
 
 	util::Mesh LoadMeshFromObj(std::string fileName);
 
-	Vector3 MultiplyMatrixVector3(Vector3& const vec, Matrix& const mat);
+	Vector3 MultiplyMatrixVector3(const Matrix & mat, const Vector3 & vec);
 
 	Matrix MakeProjectionMatrix(float fov, float aspectRatio, float fNear, float fFar);
 

@@ -43,7 +43,7 @@ util::Mesh util::LoadMeshFromObj(std::string fileName)
 	return mesh;
 }
 
-Vector3 util::MultiplyMatrixVector3(Vector3& const vec, Matrix& const mat)
+Vector3 util::MultiplyMatrixVector3(const Matrix & mat, const Vector3 & vec)
 {
 	Vector3 result = Vector3Transform(vec, mat);
 	float w = vec.x * mat.m3 + vec.y * mat.m7 + vec.z * mat.m11 + mat.m15;
