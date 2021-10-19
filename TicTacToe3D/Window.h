@@ -22,6 +22,10 @@ private:
 
 	Vec3 selectedCube_;
 
+	enum class Direction {FORWARD = 0, RIGHT, BACK, LEFT};
+
+	const static std::map<Direction, Vec3> directionMap_;
+
 	std::map<std::string, util::Model> models_;
 	std::map<std::string, util::Mesh> meshes_;
 

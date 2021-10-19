@@ -4,6 +4,13 @@
 #include <algorithm>
 #include <sstream>
 
+const std::map<Window::Direction, Vec3> Window::directionMap_ = {
+	{Direction::FORWARD, {0, 0, -1}},
+	{Direction::RIGHT, {1, 0, 0}},
+	{Direction::BACK, {0, 0, 1}},
+	{Direction::LEFT, {-1, 0, 0}},
+};
+
 void Window::SelectCube(const Vec3& pos)
 {
 	if (!(
@@ -120,21 +127,39 @@ void Window::Open()
 		elapsed_time = (float)(total_time - lastUpdateTime);
 		lastUpdateTime = total_time;
 
-		//if (IsKeyDown(KEY_RIGHT)) cameraYaw_ += 0.5f * elapsed_time;
-		//if (IsKeyDown(KEY_LEFT)) cameraYaw_ -= 0.5f * elapsed_time;
-		//Vector3 forward = Vector3Scale(lookDir_, 8.0f * elapsed_time);
-		//if (IsKeyDown(KEY_UP)) camera_ = Vector3Add(camera_, forward);
-		//if (IsKeyDown(KEY_DOWN)) camera_ = Vector3Subtract(camera_, forward);
-		//if (IsKeyDown(KEY_Q)) cameraPitch_ += 0.5f * elapsed_time;
-		//if (IsKeyDown(KEY_E)) cameraPitch_ -= 0.5f * elapsed_time;
+		//if (IsKeyDown(KEY_UP)) cameraDistance_ -= 5.f * elapsed_time;
+		//if (IsKeyDown(KEY_DOWN)) cameraDistance_ += 5.f * elapsed_time;
 
-		if (IsKeyDown(KEY_UP)) cameraDistance_ -= 5.f * elapsed_time;
-		if (IsKeyDown(KEY_DOWN)) cameraDistance_ += 5.f * elapsed_time;
+		Vec3 frontDir, rightDir, backDir, leftDir;
+
+		Direction startDir = Direction::FORWARD;
+
+		if (cameraYaw_ > (PI / 4.f) && cameraYaw_ <= ((PI * 3.f) / 4.f)) {
+			startDir = Direction::RIGHT;
+		}
+		else if (cameraYaw_ > ((PI * 3.f) / 4.f) && cameraYaw_ <= ((PI * 5.f) / 4.f)) {
+			startDir = Direction::BACK;
+		}
+		else if (cameraYaw_ > ((PI * 5.f) / 4.f) && cameraYaw_ <= ((PI * 7.f) / 4.f)) {
+			startDir = Direction::LEFT;
+		}
+
+
+		frontDir = directionMap_.at(startDir);
+		rightDir = directionMap_.at(static_cast<Direction>((static_cast<int>(startDir) + 1) % 4));
+		backDir = directionMap_.at(static_cast<Direction>((static_cast<int>(startDir) + 2) % 4));
+		leftDir = directionMap_.at(static_cast<Direction>((static_cast<int>(startDir) + 3) % 4));
+
+
+		if (IsKeyDown(KEY_UP)) cameraPitch_ += 5.f * elapsed_time;
+		if (IsKeyDown(KEY_DOWN)) cameraPitch_ -= 5.f * elapsed_time;
+		if (IsKeyDown(KEY_RIGHT)) cameraYaw_ -= 5.f * elapsed_time;
+		if (IsKeyDown(KEY_LEFT)) cameraYaw_ += 5.f * elapsed_time;
 		
-		if (IsKeyPressed(KEY_D)) SelectCube(selectedCube_ + Vec3{ 1, 0, 0 });
-		if (IsKeyPressed(KEY_A)) SelectCube(selectedCube_ + Vec3{ -1, 0, 0 });
-		if (IsKeyPressed(KEY_W)) SelectCube(selectedCube_ + Vec3{ 0, 0, -1 });
-		if (IsKeyPressed(KEY_S)) SelectCube(selectedCube_ + Vec3{ 0, 0, 1 });
+		if (IsKeyPressed(KEY_D)) SelectCube(selectedCube_ + rightDir);
+		if (IsKeyPressed(KEY_A)) SelectCube(selectedCube_ + leftDir);
+		if (IsKeyPressed(KEY_W)) SelectCube(selectedCube_ + frontDir);
+		if (IsKeyPressed(KEY_S)) SelectCube(selectedCube_ + backDir);
 		if (IsKeyPressed(KEY_Q)) SelectCube(selectedCube_ + Vec3{ 0, 1, 0 });
 		if (IsKeyPressed(KEY_E)) SelectCube(selectedCube_ + Vec3{ 0, -1, 0 });
 		if (IsKeyPressed(KEY_SPACE)) useCube(selectedCube_);
@@ -157,6 +182,12 @@ void Window::Open()
 		Vector3 up = { 0, 1, 0 };
 		Vector3 target = { 0, 0, -1 };
 		cameraPitch_ = Clamp(cameraPitch_, (-PI / 2) * 0.99f, (PI / 2) * 0.99f);
+		if (cameraYaw_ < 0) {
+			cameraYaw_ += 2.0f * PI;
+		}
+		if (cameraYaw_ >= 2.0f * PI) {
+			cameraYaw_ -= 2.0f * PI;
+		}
 		Matrix cameraRot = MatrixRotateXYZ({cameraPitch_, cameraYaw_, 0});
 		lookDir_ = util::MultiplyMatrixVector3(target, cameraRot);
 
