@@ -12,8 +12,8 @@ private:
 	Matrix projection_matrix_;
 	Vector3 camera_;
 	Vector3 lookDir_;
-	int screen_width_;
-	int screen_height_;
+	int screenWidth_;
+	int screenHeight_;
 
 	float theta_;
 	float cameraYaw_;

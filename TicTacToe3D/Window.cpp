@@ -66,7 +66,7 @@ bool Window::useCube(const Vec3& pos)
 	return true;
 }
 
-Window::Window() : screen_width_(800), screen_height_(800), theta_(0),
+Window::Window() : screenWidth_(800), screenHeight_(800), theta_(0),
 camera_{ 0.0f, 0.0f, 0.0f }, cameraYaw_(0), cameraPitch_(0), models_(),
 selectedCube_{ 1, 1, 1 }, selectedCubes_(), lookDir_{ 0, 0, 0 },
 cameraDistance_(30), meshes_(), game_()
@@ -75,7 +75,7 @@ cameraDistance_(30), meshes_(), game_()
 	float near = 0.1f;
 	float far = 1000.0f;
 	float fov = 90.0f;
-	float aspect_ratio = (float)screen_height_ / (float)screen_width_;
+	float aspect_ratio = (float)screenHeight_ / (float)screenWidth_;
 
 	projection_matrix_ = util::MakeProjectionMatrix(fov, aspect_ratio, near, far);
 
@@ -108,7 +108,7 @@ cameraDistance_(30), meshes_(), game_()
 
 void Window::Open()
 {
-	InitWindow(screen_width_, screen_height_, "TicTacToe 3D");
+	InitWindow(screenWidth_, screenHeight_, "TicTacToe 3D");
 	SetTargetFPS(60);
 
 	float elapsed_time = 0.0f;
@@ -249,9 +249,9 @@ void Window::Open()
 					tri_projected.p[1] = Vector3Add(tri_projected.p[1], offsetView);
 					tri_projected.p[2] = Vector3Add(tri_projected.p[2], offsetView);
 
-					tri_projected.p[0].x *= 0.5f * (float)screen_width_; tri_projected.p[0].y *= 0.5f * (float)screen_height_;
-					tri_projected.p[1].x *= 0.5f * (float)screen_width_; tri_projected.p[1].y *= 0.5f * (float)screen_height_;
-					tri_projected.p[2].x *= 0.5f * (float)screen_width_; tri_projected.p[2].y *= 0.5f * (float)screen_height_;
+					tri_projected.p[0].x *= 0.5f * (float)screenWidth_; tri_projected.p[0].y *= 0.5f * (float)screenHeight_;
+					tri_projected.p[1].x *= 0.5f * (float)screenWidth_; tri_projected.p[1].y *= 0.5f * (float)screenHeight_;
+					tri_projected.p[2].x *= 0.5f * (float)screenWidth_; tri_projected.p[2].y *= 0.5f * (float)screenHeight_;
 
 					triangles_to_raster.push_back(tri_projected);
 				}
@@ -276,7 +276,7 @@ void Window::Open()
 		auto oPlayerScore = game_.GetPlayer('O').GetPoints();
 		auto scoreText = FormatText("%d :X | O: %d", xPlayerScore, oPlayerScore);
 		auto scoreTextSize = 40;
-		auto scoreXPos = screen_width_ / 2.0f - MeasureText(scoreText, scoreTextSize)/2.0f;
+		auto scoreXPos = screenWidth_ / 2.0f - MeasureText(scoreText, scoreTextSize)/2.0f;
 		DrawText(scoreText, scoreXPos, 30, scoreTextSize, BLACK);
 
 		for (auto& triProjected : triangles_to_raster) {
@@ -297,6 +297,18 @@ void Window::Open()
 				DrawLine(triProjected.p[2].x, triProjected.p[2].y,
 					triProjected.p[0].x, triProjected.p[0].y, BLACK);
 			}
+		}
+
+		if (game_.PossibleMovesLeft()) {
+			auto turnText = FormatText("Turn of: %c", game_.GetCurrentPlayer().GetSymbol());
+			DrawText(turnText, 5, 25, 20, BLACK);
+		}
+		else {
+			auto gameOverText = "GAME OVER";
+			auto gameOverTextSize = 50;
+			auto gameOverTextXPos = (screenWidth_ - MeasureText(gameOverText, gameOverTextSize))/2.0f;
+			auto gameOverTextYPos = (screenHeight_ - gameOverTextSize) / 2.0f;
+			DrawText(gameOverText, gameOverTextXPos, gameOverTextYPos, gameOverTextSize, BLACK);
 		}
 
 		EndDrawing();
