@@ -66,6 +66,26 @@ bool Window::useCube(const Vec3& pos)
 	return true;
 }
 
+std::string Window::GetWinnerString() const
+{
+	std::ostringstream ss;
+
+	auto xPlayer = game_.GetPlayer('X');
+	auto oPlayer = game_.GetPlayer('O');
+
+	if (xPlayer.GetPoints() == oPlayer.GetPoints()) {
+		ss << "TIE";
+	}
+	else if (xPlayer.GetPoints() > oPlayer.GetPoints()) {
+		ss << xPlayer.GetSymbol() << " WINS!";
+	}
+	else {
+		ss << oPlayer.GetSymbol() << " WINS!";
+	}
+	
+	return ss.str();
+}
+
 Window::Window() : screenWidth_(800), screenHeight_(800), theta_(0),
 camera_{ 0.0f, 0.0f, 0.0f }, cameraYaw_(0), cameraPitch_(0), models_(),
 selectedCube_{ 1, 1, 1 }, selectedCubes_(), lookDir_{ 0, 0, 0 },
@@ -104,6 +124,14 @@ cameraDistance_(30), meshes_(), game_()
 	oMesh.setColor(BLUE);
 	meshes_["X"] = xMesh;
 	meshes_["O"] = oMesh;
+}
+
+Vector2 Window::GetCenteredTextPos(const char* text, const int size) const
+{
+	Vector2 out{};
+	out.x = (screenWidth_ - MeasureText(text, size)) / 2.0f;
+	out.y = (screenHeight_ - size) / 2.0f;
+	return out;
 }
 
 void Window::Open()
@@ -306,9 +334,14 @@ void Window::Open()
 		else {
 			auto gameOverText = "GAME OVER";
 			auto gameOverTextSize = 50;
-			auto gameOverTextXPos = (screenWidth_ - MeasureText(gameOverText, gameOverTextSize))/2.0f;
+			auto gameOverTextXPos = (screenWidth_ - MeasureText(gameOverText, gameOverTextSize)) / 2.0f;
 			auto gameOverTextYPos = (screenHeight_ - gameOverTextSize) / 2.0f;
 			DrawText(gameOverText, gameOverTextXPos, gameOverTextYPos, gameOverTextSize, BLACK);
+			auto winnerTextStr = GetWinnerString();
+			char winnerText[64]{};
+			winnerTextStr.copy(winnerText, winnerTextStr.size() + 1);
+			auto winnerTextPos = GetCenteredTextPos(winnerText, gameOverTextSize);
+			DrawText(winnerText, winnerTextPos.x, gameOverTextYPos + gameOverTextSize, gameOverTextSize, BLACK);
 		}
 
 		EndDrawing();

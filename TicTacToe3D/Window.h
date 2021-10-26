@@ -36,6 +36,8 @@ private:
 	void SelectCube(const Vec3& pos);
 	std::string getCubeIdString(const Vec3& pos);
 	bool useCube(const Vec3& pos);
+	std::string GetWinnerString() const;
+	Vector2 GetCenteredTextPos(const char* text, const int size) const;
 public:
 	Window();
 	void Open();
