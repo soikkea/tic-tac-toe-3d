@@ -296,9 +296,8 @@ void Window::Open()
 
 		BeginDrawing();
 		ClearBackground(RAYWHITE);
-		DrawText("TicTacToe 3D!", 190, 200, 20, LIGHTGRAY);
-		DrawFPS(5, 5);
-		DrawText(FormatText("Camera pos: %2.02f, %2.02f, %2.02f", camera_.x, camera_.y, camera_.z), 5, 25, 20, BLACK);
+		//DrawText("TicTacToe 3D!", 190, 0, 20, LIGHTGRAY);
+		//DrawFPS(5, 5);
 
 		auto xPlayerScore = game_.GetPlayer('X').GetPoints();
 		auto oPlayerScore = game_.GetPlayer('O').GetPoints();
