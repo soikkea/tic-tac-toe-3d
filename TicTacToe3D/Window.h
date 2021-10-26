@@ -20,6 +20,8 @@ private:
 	float cameraPitch_;
 	float cameraDistance_;
 
+	bool showFps_;
+
 	Vec3 selectedCube_;
 
 	enum class Direction {FORWARD = 0, RIGHT, BACK, LEFT};

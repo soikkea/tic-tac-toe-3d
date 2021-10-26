@@ -89,7 +89,7 @@ std::string Window::GetWinnerString() const
 Window::Window() : screenWidth_(800), screenHeight_(800), theta_(0),
 camera_{ 0.0f, 0.0f, 0.0f }, cameraYaw_(0), cameraPitch_(0), models_(),
 selectedCube_{ 1, 1, 1 }, selectedCubes_(), lookDir_{ 0, 0, 0 },
-cameraDistance_(30), meshes_(), game_()
+cameraDistance_(30), meshes_(), game_(), showFps_(false)
 {
 	// Projection Matrix
 	float near = 0.1f;
@@ -191,6 +191,7 @@ void Window::Open()
 		if (IsKeyPressed(KEY_Q)) SelectCube(selectedCube_ + Vec3{ 0, 1, 0 });
 		if (IsKeyPressed(KEY_E)) SelectCube(selectedCube_ + Vec3{ 0, -1, 0 });
 		if (IsKeyPressed(KEY_SPACE)) useCube(selectedCube_);
+		if (IsKeyPressed(KEY_F)) showFps_ = !showFps_;
 
 		if (IsMouseButtonDown(MOUSE_LEFT_BUTTON) || IsMouseButtonDown(MOUSE_RIGHT_BUTTON)) {
 			isDragging = true;
@@ -296,8 +297,6 @@ void Window::Open()
 
 		BeginDrawing();
 		ClearBackground(RAYWHITE);
-		//DrawText("TicTacToe 3D!", 190, 0, 20, LIGHTGRAY);
-		//DrawFPS(5, 5);
 
 		auto xPlayerScore = game_.GetPlayer('X').GetPoints();
 		auto oPlayerScore = game_.GetPlayer('O').GetPoints();
@@ -341,6 +340,10 @@ void Window::Open()
 			winnerTextStr.copy(winnerText, winnerTextStr.size() + 1);
 			auto winnerTextPos = GetCenteredTextPos(winnerText, gameOverTextSize);
 			DrawText(winnerText, winnerTextPos.x, gameOverTextYPos + gameOverTextSize, gameOverTextSize, BLACK);
+		}
+
+		if (showFps_) {
+			DrawFPS(5, 5);
 		}
 
 		EndDrawing();
